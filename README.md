@@ -1,5 +1,6 @@
 # devops-netology
 # 24.01.2021
+# 26.01.2021 Commit из IDE в ветку main
 
 # Игонирурем системные файлы terraform, плагины итд
 **/.terraform/*
