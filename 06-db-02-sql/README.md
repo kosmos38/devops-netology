@@ -37,13 +37,15 @@
 	select * from pg_shadow;
 	GRANT ALL ON DATABASE test_db TO "test-admin-user";
 
-CREATE USER "test-simple-user" WITH password 'asd';
+	CREATE USER "test-simple-user" WITH password 'asd';
 
 Подключаюсь к postgres от вновь созданного пользователя:
+
 	psql -h 127.0.0.1 -p 5432 -U test-admin-user -d test_db
 
 Создание таблиц:
-CREATE TABLE orders
+
+```CREATE TABLE orders
 (
     id SERIAL PRIMARY KEY,
     наименование CHARACTER VARYING(30),
@@ -59,21 +61,26 @@ CREATE TABLE clients
 	FOREIGN KEY (заказ) REFERENCES orders (id)
 );
 CREATE INDEX ON clients("страна проживания");
+```
 
 Выдача прав на таблицы:
-GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE orders,clients TO "test-simple-user";
+
+	GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE orders,clients TO "test-simple-user";
 
 Итоговый список БД после выполнения пунктов выше:
-test_db=> \dt public.*
+
+```test_db=> \dt public.*
              List of relations
  Schema |  Name   | Type  |      Owner
 --------+---------+-------+-----------------
  public | clients | table | test-admin-user
  public | orders  | table | test-admin-user
 (2 rows)
+```
 
 Описание таблиц (describe):
-test_db=> \d+ orders
+
+```test_db=> \d+ orders
                                                           Table "public.orders"
     Column    |         Type          | Collation | Nullable |              Default               | Storage  | Stats target | Description
 --------------+-----------------------+-----------+----------+------------------------------------+----------+--------------+-------------
@@ -100,12 +107,16 @@ Indexes:
 Foreign-key constraints:
     "clients_заказ_fkey" FOREIGN KEY ("заказ") REFERENCES orders(id)
 Access method: heap
+```
 
 SQL-запрос для выдачи списка пользователей с правами над таблицами test_db:
-SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE table_name='orders';
-SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE table_name='clients';
+
+	SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE table_name='orders';
+	SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE table_name='clients';
 
 Список пользователей с правами над таблицами test_db:
+
+```
      grantee      | privilege_type
 ------------------+----------------
  test-admin-user  | INSERT
@@ -120,11 +131,12 @@ SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE t
  test-simple-user | UPDATE
  test-simple-user | DELETE
 (11 rows)
-
+```
 
 ## Задача 3
-Используя SQL синтаксис - наполните таблицы следующими тестовыми данными:
-test_db=> INSERT INTO orders(наименование, цена) VALUES(Шоколад, 10);
+>Используя SQL синтаксис - наполните таблицы следующими тестовыми данными:
+
+```test_db=> INSERT INTO orders(наименование, цена) VALUES(Шоколад, 10);
 test_db=> INSERT INTO orders(наименование, цена) VALUES('Принтер', 3000);
 ...
 test_db=> select * from orders;
@@ -147,8 +159,11 @@ test_db=> select * from clients;
   4 | Ронни Джеймс Дио     | Russia            |
   5 | Ritchie Blackmore    | Russia            |
 (5 rows)
+```
 
 Вычислите количество записей для каждой таблицы:
+
+```
 test_db=> SELECT count(*) FROM clients;
  count
 -------
@@ -160,16 +175,19 @@ test_db=> SELECT count(*) FROM orders;
 -------
      5
 (1 row)
-
+```
 
 ## Задача 4
-Часть пользователей из таблицы clients решили оформить заказы из таблицы orders.
-Используя foreign keys свяжите записи из таблиц, согласно таблице:
-Проверяю работу внешнего ключа, используя несуществующий id = 6
-test_db=> UPDATE clients SET заказ = 6 WHERE фамилия = 'Иванов Иван Иванович';
-ERROR:  insert or update on table "clients" violates foreign key constraint "clients_заказ_fkey"
-DETAIL:  Key (заказ)=(6) is not present in table "orders".
+>Часть пользователей из таблицы clients решили оформить заказы из таблицы orders.
+>Используя foreign keys свяжите записи из таблиц, согласно таблице:
 
+Проверяю работу внешнего ключа, используя несуществующий id = 6
+
+	test_db=> UPDATE clients SET заказ = 6 WHERE фамилия = 'Иванов Иван Иванович';
+	ERROR:  insert or update on table "clients" violates foreign key constraint "clients_заказ_fkey"
+	DETAIL:  Key (заказ)=(6) is not present in table "orders".
+
+```
 UPDATE clients SET заказ = 5 WHERE фамилия = 'Иоганн Себастьян Бах';
 test_db=> SELECT * FROM clients;
  id |       фамилия        | страна проживания | заказ
@@ -180,8 +198,11 @@ test_db=> SELECT * FROM clients;
   2 | Петров Петр Петрович | Canada            |     4
   3 | Иоганн Себастьян Бах | Japan             |     5
 (5 rows)
+```
 
 Приведите SQL-запрос для выдачи всех пользователей, которые совершили заказ, а также вывод данного запроса.
+
+```
 test_db=> SELECT * FROM clients WHERE заказ IS NOT NULL;
  id |       фамилия        | страна проживания | заказ
 ----+----------------------+-------------------+-------
@@ -189,10 +210,13 @@ test_db=> SELECT * FROM clients WHERE заказ IS NOT NULL;
   2 | Петров Петр Петрович | Canada            |     4
   3 | Иоганн Себастьян Бах | Japan             |     5
 (3 rows)
-
-
+```
 
 ## Задача 5
+>Получите полную информацию по выполнению запроса выдачи всех пользователей из задачи 4 (используя директиву EXPLAIN).
+>Приведите получившийся результат и объясните что значат полученные значения.
+
+```
 test_db=> EXPLAIN
 test_db-> SELECT * FROM clients WHERE заказ IS NOT NULL;
                          QUERY PLAN
@@ -212,6 +236,7 @@ SELECT * FROM clients WHERE заказ IS NOT NULL;
  Planning Time: 0.050 ms
  Execution Time: 0.027 ms
 (5 rows)
+```
 
 cost: стоимость запроса
 rows: число записей, обработанных для получения выходных данных
@@ -220,25 +245,40 @@ Execution Time: 0.027 ms	Факт
 
 
 ## Задача 6
+>Создайте бэкап БД test_db и поместите его в volume, предназначенный для бэкапов (см. Задачу 1).
+>Остановите контейнер с PostgreSQL (но не удаляйте volumes).
+>Поднимите новый пустой контейнер с PostgreSQL.
+>Восстановите БД test_db в новом контейнере.
+>Приведите список операций, который вы применяли для бэкапа данных и восстановления.
+
 pg_dump является автономной утилитой, поэтому выполняем её не SQL запросом, а из консоли контейнера:
-root@f6e8f55d2279:/# pg_dump -U postgres -W test_db > /tmp/test_db.dump
+
+	root@f6e8f55d2279:/# pg_dump -U postgres -W test_db > /tmp/test_db.dump
 
 Остановил и удалил контейнер postgres:
-docker rm f6e8f55d2279
+
+	docker rm f6e8f55d2279
 
 Очистил volume с данными:
-rm -rf * /var/lib/docker/volumes/postgres_db/_data/
+
+	rm -rf * /var/lib/docker/volumes/postgres_db/_data/
 
 Стартую новый контейнер:
+
+```
 docker run -it --rm -p 5432:5432 \
 -v postgres_db:/var/lib/postgresql/data \
 -v postgres_backup:/tmp \
 -e POSTGRES_PASSWORD=123 postgres:12
+```
 
 Подключаюсь:
-docker exec -it 86bfb3e7f026 bash
+
+	docker exec -it 86bfb3e7f026 bash
 
 Смотрю листинг баз:
+
+```
 postgres=# \l
                                  List of databases
    Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
@@ -249,21 +289,31 @@ postgres=# \l
  template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
            |          |          |            |            | postgres=CTc/postgres
 (3 rows)
+```
 
 Создаю базу:
-postgres=# CREATE DATABASE test_db;
+
+	postgres=# CREATE DATABASE test_db;
+	
 Создаю пользователя, который ранее владел базой:
-postgres=# CREATE USER "test-admin-user" WITH password qwe;
+
+	postgres=# CREATE USER "test-admin-user" WITH password qwe;
+
 Назначаю права:
-postgres=# GRANT ALL ON DATABASE test_db TO "test-admin-user";
+
+	postgres=# GRANT ALL ON DATABASE test_db TO "test-admin-user";
 
 Восстанавливаю базу из дампа:
-root@86bfb3e7f026:/# psql -U postgres -W test_db < /tmp/test_db.dump
+
+	root@86bfb3e7f026:/# psql -U postgres -W test_db < /tmp/test_db.dump
 
 Подключаюсь к восстановленной базе:
-root@86bfb3e7f026:/# psql -U test-admin-user -W -d test_db
+
+	root@86bfb3e7f026:/# psql -U test-admin-user -W -d test_db
 
 Проверяю:
+
+```
 test_db=> \d+
                                 List of relations
  Schema |      Name      |   Type   |      Owner      |    Size    | Description
@@ -281,4 +331,4 @@ test_db=> SELECT * FROM clients WHERE заказ IS NOT NULL;
   2 | Петров Петр Петрович | Canada            |     4
   3 | Иоганн Себастьян Бах | Japan             |     5
 (3 rows)
-
+```
