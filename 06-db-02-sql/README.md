@@ -43,7 +43,7 @@
 
 	psql -h 127.0.0.1 -p 5432 -U test-admin-user -d test_db
 
-Создание таблиц:
+Создаю таблицы:
 
 ```CREATE TABLE orders
 (
@@ -63,7 +63,7 @@ CREATE TABLE clients
 CREATE INDEX ON clients("страна проживания");
 ```
 
-Выдача прав на таблицы:
+Выдаю права на таблицы:
 
 	GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE orders,clients TO "test-simple-user";
 
