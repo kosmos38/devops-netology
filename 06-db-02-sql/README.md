@@ -1,15 +1,18 @@
 ## Задача 1
-docker volume create postgres_db
-docker volume create postgres_backup
-docker volume ls
+>Используя docker поднимите инстанс PostgreSQL (версию 12) c 2 volume, в который будут складываться данные БД и бэкапы.
+>Приведите получившуюся команду или docker-compose манифест.
 
-docker run -it --rm -p 5432:5432 \
--v postgres_db:/var/lib/postgresql/data \
--v postgres_backup:/tmp \
--e POSTGRES_PASSWORD=123 postgres:12
+	docker volume create postgres_db
+	docker volume create postgres_backup
+	docker volume ls
 
-psql -h 192.168.100.2 -p 5432 -U postgres
-psql -h 192.168.100.2 -p 5432 -U test-admin-user -d test_db
+	docker run -it --rm -p 5432:5432 \
+	-v postgres_db:/var/lib/postgresql/data \
+	-v postgres_backup:/tmp \
+	-e POSTGRES_PASSWORD=123 postgres:12
+
+	psql -h 192.168.100.2 -p 5432 -U postgres
+	psql -h 192.168.100.2 -p 5432 -U test-admin-user -d test_db
 
 
 ## Задача 2
