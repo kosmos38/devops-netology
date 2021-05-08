@@ -1,21 +1,25 @@
 ## Задача 1
 >Используя docker поднимите инстанс PostgreSQL (версию 12) c 2 volume, в который будут складываться данные БД и бэкапы.
 >Приведите получившуюся команду или docker-compose манифест.
-
+Создаю volume:
 	docker volume create postgres_db
 	docker volume create postgres_backup
-	docker volume ls
-
+Запускаю контейнер из образа postgres:12 с подключенными двумя volume:
 	docker run -it --rm -p 5432:5432 \
 	-v postgres_db:/var/lib/postgresql/data \
 	-v postgres_backup:/tmp \
 	-e POSTGRES_PASSWORD=123 postgres:12
-
-	psql -h 192.168.100.2 -p 5432 -U postgres
-	psql -h 192.168.100.2 -p 5432 -U test-admin-user -d test_db
-
+Подключаюсь к контейнеру с хостовой машины:
+	psql -h 127.0.0.1 -p 5432 -U postgres
 
 ## Задача 2
+>В БД из задачи 1:
+>создайте пользователя test-admin-user и БД test_db
+>в БД test_db создайте таблицу orders и clients (спeцификация таблиц ниже)
+>предоставьте привилегии на все операции пользователю test-admin-user на таблицы БД test_db
+>создайте пользователя test-simple-user
+>предоставьте пользователю test-simple-user права на SELECT/INSERT/UPDATE/DELETE данных таблиц БД test_db
+
 CREATE DATABASE test_db;
 select * from pg_database;
 
@@ -24,6 +28,9 @@ select * from pg_shadow;
 GRANT ALL ON DATABASE test_db TO "test-admin-user";
 
 CREATE USER "test-simple-user" WITH password 'asd';
+
+Подключаюсь к postgres от вновь созданного пользователя:
+	psql -h 127.0.0.1 -p 5432 -U test-admin-user -d test_db
 
 Создание таблиц:
 CREATE TABLE orders
