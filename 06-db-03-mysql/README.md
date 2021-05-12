@@ -1,4 +1,5 @@
 ## Задача 1
+>Используя docker поднимите инстанс MySQL (версию 8). Данные БД сохраните в volume.
 
 ```docker volume create mysql_db
 docker volume create mysql_backup
@@ -8,22 +9,28 @@ docker run -it -p 3306:3306 \
 -v mysql_backup:/tmp \
 -e MYSQL_ROOT_PASSWORD=123 -d mysql:8.0
 ```
+>Изучите бэкап БД и восстановитесь из него.
 
 Скачиваю дамп:
 wget https://raw.githubusercontent.com/netology-code/virt-homeworks/master/06-db-03-mysql/test_data/test_dump.sql
 
 Создаю пустую базу для восстановления дампа:
 
-  mysql> create database test_db;
+    mysql> create database test_db;
 
 Восстанавливаю базу из дампа:
 
-  root@1dc041fdcead:/# mysql -u root -p test_db < /tmp/test_dump.sql
+    root@1dc041fdcead:/# mysql -u root -p test_db < /tmp/test_dump.sql
 
 Вывод статуса версии сервера БД:
+
+```
 mysql> \s
 --------------
 mysql  Ver 8.0.25 for Linux on x86_64 (MySQL Community Server - GPL)
+```
+
+>Приведите в ответе количество записей с price > 300.
 
 Подключаюсь к базе и выбираю данные:
 
@@ -39,6 +46,7 @@ mysql> select * from orders where price > 300;
 ```
 
 ## Задача 2
+>Создайте пользователя test в БД c паролем test-pass
 
 ```
 CREATE USER 'test'@'localhost' IDENTIFIED WITH mysql_native_password BY 'test-pass';
@@ -46,7 +54,14 @@ ALTER USER 'test'@'localhost' ATTRIBUTE '{"fname": "James", "lname": "Pretty"}';
 ALTER USER 'test'@'localhost' PASSWORD EXPIRE INTERVAL 180 DAY;
 ALTER USER 'test'@'localhost' FAILED_LOGIN_ATTEMPTS 3;
 ALTER USER 'test'@'localhost' WITH MAX_QUERIES_PER_HOUR 100;
+```
+>Предоставьте привелегии пользователю test на операции SELECT базы test_db
 
+Выдаю пользователю тест права SELECT на базу test_db:
+
+```
+  mysql> GRANT SELECT ON test_db.* TO 'test'@'localhost';
+  Query OK, 0 rows affected, 1 warning (0.15 sec)
 
 mysql> SELECT * FROM INFORMATION_SCHEMA.USER_ATTRIBUTES WHERE USER='test';
 +------+-----------+---------------------------------------+
@@ -58,13 +73,8 @@ mysql> SELECT * FROM INFORMATION_SCHEMA.USER_ATTRIBUTES WHERE USER='test';
 ==================================================================================
 ```
 
-Выдаю пользователю тест права SELECT на базу test_db:
-
-  mysql> GRANT SELECT ON test_db.* TO 'test'@'localhost';
-  Query OK, 0 rows affected, 1 warning (0.15 sec)
-
-
 ## Задача 3
+>Установите профилирование SET profiling = 1. Изучите вывод профилирования команд SHOW PROFILES;
 
 ```
 mysql> SET profiling = 1;
@@ -95,6 +105,8 @@ mysql> SELECT TABLE_NAME,ENGINE,ROW_FORMAT,TABLE_ROWS,DATA_LENGTH,INDEX_LENGTH F
 2 rows in set (0.04 sec)
 ```
 
+>Измените engine и приведите время выполнения и запрос на изменения из профайлера в ответе
+
 Изменил движок на MyISAM:
 
 ```
@@ -118,6 +130,9 @@ mysql> SHOW PROFILES;
 ```
 
 ## Задача 4
+>Изучите файл my.cnf в директории /etc/mysql.
+>Измените его согласно ТЗ (движок InnoDB)
+
 На моем виртуальном "сервере" 2Gb RAM, исходя из этого:
 ```
 my.cnf
