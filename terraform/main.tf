@@ -9,7 +9,7 @@ data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
-    name   = "name"
+    name   = "netology-ubuntu"
     values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 
@@ -23,11 +23,16 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "web" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+  instance_type = "t2.micro"
 
   tags = {
-    Name = "HelloWorld"
+    Name = "My first instance"
   }
 }
 
-https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
+
+
+#https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
