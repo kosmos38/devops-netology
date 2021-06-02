@@ -29,5 +29,5 @@ resource "aws_instance" "web" {
     Name = "HelloWorld"
   }
 }
-
-https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
+#
+#https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
