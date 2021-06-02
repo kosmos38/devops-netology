@@ -29,14 +29,6 @@ resource "aws_instance" "web" {
     Name = "My first instance"
   }
 }
-<<<<<<< HEAD
+
 #
-=======
-
-data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
-
-
->>>>>>> 7c5b7874d9063e3cc3f14620203a919322cf0a06
 #https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
