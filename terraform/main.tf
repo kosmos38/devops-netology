@@ -5,11 +5,12 @@ provider "aws" {
   #secret_key = "my-secret-key"
 }
 
+# Используем образ ubuntu
 data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
-    name   = "netology-ubuntu"
+    name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 
@@ -21,6 +22,10 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+data "aws_caller_identity" "web" {}
+
+data "aws_region" "web" {}
+
 resource "aws_instance" "web" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
@@ -29,6 +34,3 @@ resource "aws_instance" "web" {
     Name = "My first instance"
   }
 }
-
-#
-#https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
