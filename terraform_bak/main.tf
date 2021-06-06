@@ -9,10 +9,9 @@ locals {
     prod = 2
   }
  
-  web_instance_each_map = {
-    #"stage1" = "t2.micro"
-    "prod1" = "t4g.micro"
-    "prod2" = "t4g.micro"
+  web_instance_count_map_each = {
+    "stage" = 1
+    "prod" = 2
   }
 
 }
@@ -70,14 +69,12 @@ resource "aws_instance" "web" {
   }
 }
 
-resource "aws_instance" "web-test" {
-  ami = data.aws_ami.ubuntu.id
-  instance_type = each.value
-  for_each = local.web_instance_each_map
-      tags = {
-    Name = "${each.key}"
-  }
-  lifecycle {
-    create_before_destroy = true
-    }
-}
+# resource "aws_instance" "web-test" {
+#   ami = data.aws_ami.ubuntu.id
+#   instance_type = local.web_instance_type_map[terraform.workspace]
+#   for_each = local.web_instance_count_map_each
+#   count = each.value
+#   tags = {
+#     Name = "ubuntu-web-test-${count.index + 1}"
+#   }
+# }
