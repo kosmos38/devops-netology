@@ -19,7 +19,6 @@ terraform {
     region = "us-west-2"
   }
 }
-```
 
 kosmos@centos:/git/devops-netology/terraform$ terraform init
 
@@ -34,6 +33,7 @@ Do you want to copy existing state to the new backend?
 
 Successfully configured the backend "s3"! Terraform will automatically
 use this backend unless the backend configuration changes.
+```
 
 ## Задача 2. Инициализируем проект и создаем воркспейсы.
 
@@ -49,14 +49,16 @@ Created and switched to workspace "stage"!
 
 >> Вывод команды terraform workspace list.
 
+```
 kosmos@centos:/git/devops-netology/terraform$ terraform workspace list
   default
   prod
 * stage
+```
 
 >> Вывод команды terraform plan для воркспейса prod
 
-		kosmos@centos:/git/devops-netology/terraform$ terraform workspace select prod
+	kosmos@centos:/git/devops-netology/terraform$ terraform workspace select prod
 
 ```
 kosmos@centos:/git/devops-netology/terraform$ terraform plan
