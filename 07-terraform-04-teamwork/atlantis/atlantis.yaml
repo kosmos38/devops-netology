@@ -1,0 +1,41 @@
+version: 3
+automerge: true
+delete_source_branch_on_merge: true
+projects:
+- name: netology-project1
+  dir: .
+  workspace: stage
+  terraform_version: v0.11.0
+  delete_source_branch_on_merge: true
+  autoplan:
+    when_modified: ["*.tf", "../modules/**.tf"]
+    enabled: true
+  apply_requirements: [mergeable, approved]
+  workflow: workflow_stage
+- name: netology-project1
+  dir: .
+  workspace: prod
+  terraform_version: v0.11.0
+  delete_source_branch_on_merge: true
+  autoplan:
+    when_modified: ["*.tf", "../modules/**.tf"]
+    enabled: true
+  apply_requirements: [mergeable, approved]
+  workflow: workflow_prod
+workflows:
+  workflow_stage:
+    plan:
+      steps: [init, plan]
+    apply:
+      steps: [apply]
+  workflow_prod:
+    plan:
+      steps:
+      - run: my-custom-command arg1 arg2
+      - init
+      - plan:
+      - run: my-custom-command arg1 arg2
+    apply:
+      steps:
+      - run: echo hi
+      - apply
