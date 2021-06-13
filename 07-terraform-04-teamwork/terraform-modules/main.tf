@@ -65,3 +65,20 @@ resource "aws_instance" "web-test" {
     Name = "${each.key}"
   }
 }
+
+module "ec2-instance" {
+  source                 = "terraform-aws-modules/ec2-instance/aws"
+  version                = "~> 2.0"
+
+  name                   = "ubuntu-web-module-1"
+  instance_count         = 1
+
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = ["sg-12345678"]
+  subnet_id              = "subnet-eddcdzz4"
+
+  tags = {
+  Name = "ubuntu-web-module-1"
+  }
+}
