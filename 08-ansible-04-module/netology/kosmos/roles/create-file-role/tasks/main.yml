@@ -1,0 +1,11 @@
+---
+  - name: Run module create_file
+    create_file:
+      name: "{{ name_dir }}"
+      path: "{{ path_to_dir }}"
+      content: "{{ text }}"
+      force: "{{ force }}"
+    register: testout
+  - name: dump test output
+    debug:
+      msg: '{{ testout }}'

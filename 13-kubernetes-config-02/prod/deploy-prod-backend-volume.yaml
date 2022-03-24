@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend
+  name: backend
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - image: kosmos38/13-kubernetes-backend
+          imagePullPolicy: IfNotPresent
+          name: backend
+          volumeMounts:
+            - mountPath: "/static"
+              name: static-volume
+          env:
+          - name: DATABASE_URL
+            value: "postgres://postgres:postgres@db:5432/news"
+      volumes:
+        - name: static-volume
+          persistentVolumeClaim:
+            claimName: static-nfs-pvc

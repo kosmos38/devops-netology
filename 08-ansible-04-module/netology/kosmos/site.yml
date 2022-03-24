@@ -1,0 +1,5 @@
+---
+- name: Create directory and file with some text
+  hosts: all
+  roles:
+    - create-file-role

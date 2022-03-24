@@ -1,0 +1,11 @@
+---
+elasticsearch:
+  hosts:
+    centos7:
+      ansible_connection: docker
+      ansible_user: root
+kibana:
+  hosts:
+    centos7:
+      ansible_connection: docker
+      ansible_user: root

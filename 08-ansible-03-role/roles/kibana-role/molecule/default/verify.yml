@@ -1,0 +1,9 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: Check Kibana version
+    shell:
+      cmd: /opt/kibana/7.13.2/bin/kibana --allow-root --version
+    changed_when: false

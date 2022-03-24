@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - image: kosmos38/13-kubernetes-frontend
+          imagePullPolicy: IfNotPresent
+          name: frontend
+          volumeMounts:
+            - mountPath: "/static"
+              name: static-volume
+          env:
+          - name: BASE_URL
+            value: "http://backend:9000"
+      volumes:
+        - name: static-volume
+          persistentVolumeClaim:
+            claimName: static-nfs-pvc

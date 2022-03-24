@@ -1,0 +1,13 @@
+#cloud-config
+users:
+  - name: kosmos
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+      - ssh-rsa ********************************
+runcmd:
+  - sudo chown 'kosmos:kosmos' /var/www/html/index.html
+  - echo -n > /var/www/html/index.html
+  - echo '<html><h1>15-02 netology web-server</h1></html>' > /var/www/html/index.html
+  - echo '<p><a href="https://storage.yandexcloud.net/kosmos-bucket/arshan.jpg*******">Link from YC bucket</a></p>' >> /var/www/html/index.html

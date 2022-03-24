@@ -1,0 +1,122 @@
+terraform {
+  required_providers {
+    yandex = {
+      source  = "yandex-cloud/yandex"
+      version = "0.61.0"
+    }
+  }
+}
+
+provider "yandex" {
+  token     = "*********************"
+  cloud_id  = "*********************"
+  folder_id = "*********************"
+  zone      = "ru-central1-a"
+}
+
+resource "yandex_vpc_network" "netology-vpc" {
+  name = "netology-vpc"
+}
+
+resource "yandex_vpc_route_table" "private-rt" {
+  network_id = yandex_vpc_network.netology-vpc.id
+
+  static_route {
+    destination_prefix = "0.0.0.0/0"
+    next_hop_address   = "192.168.10.254"
+  }
+}
+
+resource "yandex_vpc_subnet" "public" {
+  v4_cidr_blocks = ["192.168.10.0/24"]
+  zone           = "ru-central1-a"
+  network_id     = yandex_vpc_network.netology-vpc.id
+}
+
+resource "yandex_vpc_subnet" "private" {
+  v4_cidr_blocks = ["192.168.20.0/24"]
+  zone           = "ru-central1-a"
+  network_id     = yandex_vpc_network.netology-vpc.id
+  route_table_id = yandex_vpc_route_table.private-rt.id
+}
+
+resource "yandex_compute_instance" "default" {
+  name        = "nat-instance"
+  platform_id = "standard-v1"
+  zone        = "ru-central1-a"
+
+  resources {
+    cores  = 2
+    memory = 2
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80mrhj8fl2oe87o4e1"
+    }
+  }
+
+  network_interface {
+    subnet_id      = yandex_vpc_subnet.public.id
+    ip_address     = "192.168.10.254"
+    nat            = true
+  }
+
+  metadata = {
+    user-data = "${file("/git/devkub-homeworks/15-01-network/user-kosmos-vm.txt")}"
+  }
+}
+
+resource "yandex_compute_instance" "public-instance" {
+  name        = "public-instance"
+  platform_id = "standard-v1"
+  zone        = "ru-central1-a"
+
+  resources {
+    cores  = 2
+    memory = 2
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80le4b8gt2u33lvubr"
+    }
+  }
+
+  network_interface {
+    subnet_id  = yandex_vpc_subnet.public.id
+    ip_address = "192.168.10.253"
+    nat            = true
+    nat_ip_address = "51.250.0.160"
+  }
+
+  metadata = {
+    user-data = "${file("/git/devkub-homeworks/15-01-network/user-kosmos-vm.txt.pub")}"
+  }
+}
+
+resource "yandex_compute_instance" "private-instance" {
+  name        = "private-instance"
+  platform_id = "standard-v1"
+  zone        = "ru-central1-a"
+
+  resources {
+    cores  = 2
+    memory = 2
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80le4b8gt2u33lvubr"
+    }
+  }
+
+  network_interface {
+    subnet_id  = yandex_vpc_subnet.private.id
+    ip_address = "192.168.20.253"
+  }
+
+  metadata = {
+    user-data = "${file("/git/devkub-homeworks/15-01-network/user-kosmos-vm.txt.pub")}"
+  }
+}

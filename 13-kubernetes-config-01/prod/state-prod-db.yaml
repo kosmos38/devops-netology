@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: db
+  name: prod
+  namespace: prod
+spec:
+  serviceName: db
+  replicas: 1
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - image: postgres:13-alpine
+          imagePullPolicy: IfNotPresent
+          name: db
+          env:
+          - name: POSTGRES_PASSWORD
+            value: "postgres"
+          - name: POSTGRES_USER
+            value: "postgres"
+          - name: POSTGRES_DB
+            value: "news"

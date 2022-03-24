@@ -1,0 +1,13 @@
+---
+- name: Install java-role
+  hosts: all
+  roles:
+    - java-role
+- name: Install elastic-role
+  hosts: all
+  roles:
+    - elastic-role
+- name: Install kibana-role
+  hosts: all
+  roles:
+    - kibana-role

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-env
+  namespace: prod
+data:
+    HOSTNAME: netology.ru
+    STUDENT: Anton M. Ivanov

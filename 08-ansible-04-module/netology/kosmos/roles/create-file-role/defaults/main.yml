@@ -1,0 +1,5 @@
+---
+  name_dir: "kosmos"
+  path_to_dir: "/tmp/netology/"
+  text: "Anton Ivanov\n"
+  force: False
